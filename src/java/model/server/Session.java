@@ -4,19 +4,22 @@
  * and open the template in the editor.
  */
 
-package model;
+package model.server;
 
+import model.client.Packet;
 import java.io.Serializable;
+import java.util.Date;
 
 /**
  * 
  * @author Dani Machado
  */
-public class Session implements Packet, Serializable {
+public class Session extends Packet implements Serializable {
 
     private boolean alive;
     private String sessionID;
     private String user;
+    private Date Lastdate;
 
     public Session(boolean alive, String sessionID, String user) {
         this.alive = alive;
@@ -46,6 +49,14 @@ public class Session implements Packet, Serializable {
 
     public void setUser(String user) {
         this.user = user;
+    }
+
+    public Date getLastdate() {
+        return Lastdate;
+    }
+
+    public void setLastdate(Date Lastdate) {
+        this.Lastdate = Lastdate;
     }
     
 }

@@ -15,14 +15,14 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import model.Login;
-import model.Session;
+import model.client.LoginDesk;
+import model.server.Session;
 
 /**
  *  Classe Servlet (Servidor) que rep les peticions del GeoEcho Desktop
  * @author Dani Machado
  */
-public class ServLogin extends HttpServlet {
+public class ServLoginDesk extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -35,22 +35,22 @@ public class ServLogin extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException{
         
-        Login login = null;
+        LoginDesk login = null;
         Session session = null;
         
         try (ObjectInputStream in = new ObjectInputStream(request.getInputStream())) {
-            login = (Login)in.readObject();
+            login = (LoginDesk)in.readObject();
             session = SessionManager.createSession(login);
          
         } catch (ClassNotFoundException | IOException ex) {
-            Logger.getLogger(ServLogin.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(ServLoginDesk.class.getName()).log(Level.SEVERE, null, ex);
         }
         
         try (ObjectOutputStream out = new ObjectOutputStream(response.getOutputStream())) {
                 out.writeObject(session);
                 
         } catch (IOException ex) {
-            Logger.getLogger(ServLogin.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(ServLoginDesk.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 

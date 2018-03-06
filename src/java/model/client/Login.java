@@ -4,16 +4,14 @@
  * and open the template in the editor.
  */
 
-package model;
-
-import java.io.Serializable;
+package model.client;
 
 /**
  * 
  * @author Dani Machado
  */
-public class Login implements Packet, Serializable{
-
+public abstract class Login extends Packet{
+    
     private String user;
     private String pass;
 
@@ -32,5 +30,5 @@ public class Login implements Packet, Serializable{
     public void setPass(String pass) {
         this.pass = pass;
     }
-
+    
 }
