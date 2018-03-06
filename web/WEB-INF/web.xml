@@ -8,6 +8,10 @@
         <servlet-name>ServLoginApp</servlet-name>
         <servlet-class>server.ServLoginApp</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>GeoEchoServer</servlet-name>
+        <servlet-class>server.GeoEchoServer</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>servlogin</servlet-name>
         <url-pattern>/servlogin</url-pattern>
@@ -15,6 +19,10 @@
     <servlet-mapping>
         <servlet-name>ServLoginApp</servlet-name>
         <url-pattern>/ServLoginApp</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>GeoEchoServer</servlet-name>
+        <url-pattern>/GeoEchoServer</url-pattern>
     </servlet-mapping>
     <session-config>
         <session-timeout>

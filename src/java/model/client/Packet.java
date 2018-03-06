@@ -13,5 +13,14 @@ import java.io.Serializable;
  * @author Dani Machado
  */
 public abstract class Packet implements Serializable{
-    private String SessionId;
+    private int SessionId;
+
+    public int getSessionId() {
+        return SessionId;
+    }
+
+    public void setSessionId(int SessionId) {
+        this.SessionId = SessionId;
+    }
+    
 }

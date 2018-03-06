@@ -17,15 +17,18 @@ import java.util.Date;
 public class Session extends Packet implements Serializable {
 
     private boolean alive;
-    private String sessionID;
     private String user;
     private Date Lastdate;
 
-    public Session(boolean alive, String sessionID, String user) {
+    public Session(boolean alive, int sessionID, String user) {
         this.alive = alive;
-        this.sessionID = sessionID;
         this.user = user;
+        init(sessionID);
     }
+    
+    private void init(int sessionID){
+        this.setSessionId(sessionID);
+    }    
     
     public boolean isAlive() {
         return alive;
@@ -33,14 +36,6 @@ public class Session extends Packet implements Serializable {
 
     public void setAlive(boolean alive) {
         this.alive = alive;
-    }
-
-    public String getSessionID() {
-        return sessionID;
-    }
-
-    public void setSessionID(String sessionID) {
-        this.sessionID = sessionID;
     }
 
     public String getUser() {

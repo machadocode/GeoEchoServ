@@ -5,24 +5,23 @@
  */
 package server;
 
-import control.session.SessionManager;
+import control.persistence.ORMManager;
 import java.io.IOException;
 import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
+import java.io.PrintWriter;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import model.client.LoginApp;
-import model.server.Session;
+import model.client.Packet;
 
 /**
  *
  * @author Dani Machado
  */
-public class ServLoginApp extends HttpServlet {
+public class GeoEchoServer extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -31,29 +30,21 @@ public class ServLoginApp extends HttpServlet {
      * @param request servlet request
      * @param response servlet response
      * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
+            throws ServletException {
         
-        LoginApp login = null;
-        Session session = null;
+        ORMManager ormManager;
+        Packet packet;
         
-        try (ObjectInputStream in = new ObjectInputStream(request.getInputStream())) {
-            login = (LoginApp)in.readObject();
-            session = SessionManager.createSession(login);
-         
+        try(ObjectInputStream in = new ObjectInputStream(request.getInputStream())){
+            packet = (Packet) in.readObject();
         } catch (ClassNotFoundException | IOException ex) {
-            Logger.getLogger(ServLoginDesk.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(GeoEchoServer.class.getName()).log(Level.SEVERE, null, ex);
         }
-        
-        try (ObjectOutputStream out = new ObjectOutputStream(response.getOutputStream())) {
-                out.writeObject(session);
-                
-        } catch (IOException ex) {
-            Logger.getLogger(ServLoginDesk.class.getName()).log(Level.SEVERE, null, ex);
-        }
+
     }
+
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
     /**
      * Handles the HTTP <code>GET</code> method.

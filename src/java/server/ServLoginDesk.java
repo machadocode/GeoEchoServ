@@ -5,7 +5,7 @@
  */
 package server;
 
-import control.SessionManager;
+import control.session.SessionManager;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -16,6 +16,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import model.client.LoginDesk;
+import model.client.Packet;
 import model.server.Session;
 
 /**
@@ -39,7 +40,7 @@ public class ServLoginDesk extends HttpServlet {
         Session session = null;
         
         try (ObjectInputStream in = new ObjectInputStream(request.getInputStream())) {
-            login = (LoginDesk)in.readObject();
+            login = (LoginDesk) in.readObject();
             session = SessionManager.createSession(login);
          
         } catch (ClassNotFoundException | IOException ex) {
@@ -47,7 +48,7 @@ public class ServLoginDesk extends HttpServlet {
         }
         
         try (ObjectOutputStream out = new ObjectOutputStream(response.getOutputStream())) {
-                out.writeObject(session);
+                out.writeObject((Packet) session);
                 
         } catch (IOException ex) {
             Logger.getLogger(ServLoginDesk.class.getName()).log(Level.SEVERE, null, ex);

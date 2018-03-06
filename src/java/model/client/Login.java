@@ -30,5 +30,5 @@ public abstract class Login extends Packet{
     public void setPass(String pass) {
         this.pass = pass;
     }
-    
+        
 }
