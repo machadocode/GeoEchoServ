@@ -21,7 +21,7 @@ import model.server.User;
 public final class ORMManager {
     
     private EntityManagerFactory emf;
-    private static List<User> users;
+    private List<User> users;
 
     public ORMManager() {
         init();
@@ -53,7 +53,7 @@ public final class ORMManager {
         createEMF();
         UserJpaController userJpaControl = new UserJpaController(emf);
         User userNormal = new User("user", "user1234", "user@gmail.com", false);
-        User userAdmin = new User("useradmin", "useradmin1234", "useradmin@gmail.com", true);
+        User userAdmin = new User("admin", "admin1234", "useradmin@gmail.com", true);
         try{
             if(!consultaUsuario("user", "user1234")){
                 userJpaControl.create(userNormal);
@@ -68,7 +68,7 @@ public final class ORMManager {
         }
     }
     
-    public static boolean consultaUsuario(String name, String password){
+    public boolean consultaUsuario(String name, String password){
         for (User user : users){
             if(user.getUsername().equals(name) && user.getPassword().equals(password)){
                 return true;

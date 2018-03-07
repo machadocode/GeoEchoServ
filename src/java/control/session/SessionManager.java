@@ -22,16 +22,17 @@ import model.server.Session;
 public final class SessionManager {
     
     // Array estático que guarda las sesiones activas
-    public static ArrayList<Session> sessions = new ArrayList<Session>();
+    public ArrayList<Session> sessions = new ArrayList<>();
     
     /**
      * Mètode que crea una sessió al fer login
+     * @param orm
      * @param login
      * @return 
      */
-    public static Session createSession(Login login){
+    public Session createSession(ORMManager orm, Login login){
         Session session;
-        if(checkLogin(login)){
+        if(checkLogin(orm, login)){
             session = new Session(true, createSessionId(login), login.getUser());
             sessions.add(session);
             return session;
@@ -44,7 +45,7 @@ public final class SessionManager {
      * @param packet
      * @return 
      */
-    public static boolean checkSession(Packet packet){
+    public boolean checkSession(Packet packet){
         for(Session session : sessions){
             if (session.getSessionId() == packet.getSessionId()) return true;
         }
@@ -55,7 +56,7 @@ public final class SessionManager {
      * Mètode que realitza el logout i mata la sessió
      * @param logout
      */
-    public static void logout(Logout logout){
+    public void logout(Logout logout){
         for(Session session : sessions){
             if (session.getSessionId() == logout.getSessionId()) sessions.remove(session);
         }        
@@ -63,11 +64,12 @@ public final class SessionManager {
     
     /**
      * Mètode que comprova l'usuari i contrasenya del login
+     * @param orm
      * @param login
      * @return 
      */
-    public static boolean checkLogin(Login login){        
-        return ORMManager.consultaUsuario(login.getUser(), login.getPass());
+    public boolean checkLogin(ORMManager orm, Login login){        
+        return orm.consultaUsuario(login.getUser(), login.getPass());
     }
     
     /**
@@ -75,7 +77,7 @@ public final class SessionManager {
      * @param login
      * @return 
      */
-    private static int createSessionId(Login login){
+    private int createSessionId(Login login){
         Calendar calendar = new GregorianCalendar();
         String cadena = login.getUser() + " - " + login.getPass() + " - " + calendar.getTime().toString();
         return cadena.hashCode();

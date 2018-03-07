@@ -12,23 +12,30 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Table;
 
 /**
  * Classe Entitat per a la persistència dels usuaris
  * @author Dani Machado
  */
 @Entity
+@Table(name="users", schema="public")
 public class User implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
-    @Column(unique=true)
+    @Column(length=40, unique=true)
     private String username;
+    @Column(length=20)
     private String password;
+    @Column(length=40)
     private String email;
     private boolean adminuser;
+
+    public User() {
+    }
 
     public User(String username, String password, String email, boolean adminuser) {
         this.username = username;

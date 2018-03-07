@@ -6,26 +6,31 @@
 package server;
 
 import control.persistence.ORMManager;
+import control.session.SessionManager;
 import java.io.IOException;
 import java.io.ObjectInputStream;
-import java.io.PrintWriter;
+import java.io.ObjectOutputStream;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import model.client.Login;
+import model.client.LoginApp;
+import model.client.LoginDesk;
 import model.client.Packet;
+import model.client.Response;
+import model.server.Session;
 
 /**
- *
+ *  Classe principal del servidor GeoEcho que processa les peticions 
  * @author Dani Machado
  */
 public class GeoEchoServer extends HttpServlet {
 
     /**
-     * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
-     * methods.
+     * Processament de peticions en paquets HTTP tan GET com POST
      *
      * @param request servlet request
      * @param response servlet response
@@ -35,11 +40,43 @@ public class GeoEchoServer extends HttpServlet {
             throws ServletException {
         
         ORMManager ormManager;
-        Packet packet;
+        SessionManager sessionManager;
+        Packet packet = null;
+        Session session = null;
+        Response responseServ = null;
         
+        /**
+         * Entrada de peticions al servidor
+         */
         try(ObjectInputStream in = new ObjectInputStream(request.getInputStream())){
             packet = (Packet) in.readObject();
         } catch (ClassNotFoundException | IOException ex) {
+            Logger.getLogger(GeoEchoServer.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+        /**
+         * Lògica del processament de peticions
+         */
+        if(packet instanceof  Login){
+            sessionManager = new SessionManager();
+            ormManager = new ORMManager();
+            responseServ = new Response();
+            if(packet instanceof LoginDesk){
+                    session = sessionManager.createSession(ormManager, (LoginDesk) packet);
+                    responseServ.setSessionId(session.getSessionId());
+            }else if (packet instanceof LoginApp){
+                    session = sessionManager.createSession(ormManager, (LoginApp) packet);                        
+                    responseServ.setSessionId(session.getSessionId());
+            }            
+        }
+
+        
+        /**
+         * Resposta del servidor a les peticions
+         */
+        try(ObjectOutputStream out = new ObjectOutputStream(response.getOutputStream())){
+            out.writeObject(responseServ);
+        } catch (IOException ex) {
             Logger.getLogger(GeoEchoServer.class.getName()).log(Level.SEVERE, null, ex);
         }
 
