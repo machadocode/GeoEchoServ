@@ -47,7 +47,7 @@ public final class SessionManager {
      */
     public boolean checkSession(Packet packet){
         for(Session session : sessions){
-            if (session.getSessionId() == packet.getSessionId()) return true;
+            if (session.getSessionID() == packet.getSessionID()) return true;
         }
         return false;
     }
@@ -58,7 +58,7 @@ public final class SessionManager {
      */
     public void logout(Logout logout){
         for(Session session : sessions){
-            if (session.getSessionId() == logout.getSessionId()) sessions.remove(session);
+            if (session.getSessionID()== logout.getSessionID()) sessions.remove(session);
         }        
     }
     

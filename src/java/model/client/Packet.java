@@ -13,14 +13,14 @@ import java.io.Serializable;
  * @author Dani Machado
  */
 public abstract class Packet implements Serializable{
-    private int SessionId;
+    private int sessionID;
 
-    public int getSessionId() {
-        return SessionId;
+    public int getSessionID() {
+        return sessionID;
     }
 
-    public void setSessionId(int SessionId) {
-        this.SessionId = SessionId;
+    public void setSessionID(int sessionID) {
+        this.sessionID = sessionID;
     }
     
 }

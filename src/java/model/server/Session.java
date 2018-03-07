@@ -27,7 +27,7 @@ public class Session extends Packet implements Serializable {
     }
     
     private void init(int sessionID){
-        this.setSessionId(sessionID);
+        this.setSessionID(sessionID);
     }    
     
     public boolean isAlive() {

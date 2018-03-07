@@ -58,10 +58,10 @@ public class GeoEchoServer extends HttpServlet {
             responseServ = new Response();
             if(packet instanceof LoginDesk){
                     session = sessionManager.createSession(ormManager, (LoginDesk) packet);
-                    responseServ.setSessionId(session.getSessionId());
+                    responseServ.setSessionID(session.getSessionID());
             }else if (packet instanceof LoginApp){
                     session = sessionManager.createSession(ormManager, (LoginApp) packet);                        
-                    responseServ.setSessionId(session.getSessionId());
+                    responseServ.setSessionID(session.getSessionID());
             }            
         }
 
