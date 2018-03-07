@@ -25,18 +25,26 @@ public final class ORMManager {
 
     public ORMManager() {
         init();
-        initialValues();
     }
     
     private void init() {
         createEMF();
         UserJpaController userJpaControl = new UserJpaController(emf);
         users = userJpaControl.findUsersEntities();
-        closeEMF();
-    }
-    
-    private void initialValues(){
-        createInitialUser();
+        try{
+            if(!consultaUsuario("user", "user1234")){
+                User userNormal = new User("user", "user1234", "user@gmail.com", false);
+                userJpaControl.create(userNormal);                
+            }
+            if(!consultaUsuario("admin", "admin1234")){
+                User userAdmin = new User("admin", "admin1234", "useradmin@gmail.com", true);
+                userJpaControl.create(userAdmin);                
+            } 
+        }catch(Exception ex){
+                Logger.getLogger(ORMManager.class.getName()).log(Level.SEVERE, null, ex);            
+        }finally{
+            closeEMF();
+        }
     }
     
     private void createEMF(){
@@ -44,28 +52,6 @@ public final class ORMManager {
     }
     private void closeEMF(){
         emf.close();        
-    }
-    
-    /**
-     * Crea els usuaris per defecte
-     */
-    private void createInitialUser(){
-        createEMF();
-        UserJpaController userJpaControl = new UserJpaController(emf);
-        User userNormal = new User("user", "user1234", "user@gmail.com", false);
-        User userAdmin = new User("admin", "admin1234", "useradmin@gmail.com", true);
-        try{
-            if(!consultaUsuario("user", "user1234")){
-                userJpaControl.create(userNormal);
-            }            
-            if(!consultaUsuario("useradmin", "useradmin1234")){
-                userJpaControl.create(userAdmin);
-            }   
-        }catch(Exception ex){
-                Logger.getLogger(ORMManager.class.getName()).log(Level.SEVERE, null, ex);            
-        }finally{
-            closeEMF();
-        }
     }
     
     public boolean consultaUsuario(String name, String password){

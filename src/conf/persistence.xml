@@ -3,14 +3,20 @@
   <persistence-unit name="geoechoservPU" transaction-type="RESOURCE_LOCAL">
     <provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
     <class>model.server.User</class>
-    <exclude-unlisted-classes>false</exclude-unlisted-classes>
     <properties>
       <property name="javax.persistence.jdbc.url" value="jdbc:postgresql://localhost:5432/geoecho_db"/>
       <property name="javax.persistence.jdbc.user" value="geoecho_serv"/>
       <property name="javax.persistence.jdbc.driver" value="org.postgresql.Driver"/>
       <property name="javax.persistence.jdbc.password" value="geoecho2018"/>
       <property name="hibernate.cache.provider_class" value="org.hibernate.cache.NoCacheProvider"/>
-      <property name="javax.persistence.schema-generation.database.action" value="create"/>
+      <property name="hibernate.dialect" value="org.hibernate.dialect.PostgreSQLDialect"/>
+      <!-- DB Dialect -->
+      <property name="hibernate.hbm2ddl.auto" value="update"/>
+      <!-- create / create-drop / update -->
+      <property name="hibernate.show_sql" value="true"/>
+      <!-- Show SQL in console -->
+      <property name="hibernate.format_sql" value="true"/>
+      <!-- Show SQL formatted -->
     </properties>
   </persistence-unit>
 </persistence>

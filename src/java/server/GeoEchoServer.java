@@ -28,7 +28,11 @@ import model.server.Session;
  * @author Dani Machado
  */
 public class GeoEchoServer extends HttpServlet {
-
+        ORMManager ormManager = new ORMManager();
+        SessionManager sessionManager = new SessionManager();;
+        Packet packet = null;
+        Session session = null;
+        Response responseServ = null;
     /**
      * Processament de peticions en paquets HTTP tan GET com POST
      *
@@ -37,14 +41,7 @@ public class GeoEchoServer extends HttpServlet {
      * @throws ServletException if a servlet-specific error occurs
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException {
-        
-        ORMManager ormManager;
-        SessionManager sessionManager;
-        Packet packet = null;
-        Session session = null;
-        Response responseServ = null;
-        
+            throws ServletException {   
         /**
          * Entrada de peticions al servidor
          */
@@ -56,10 +53,8 @@ public class GeoEchoServer extends HttpServlet {
         
         /**
          * Lògica del processament de peticions
-         */
+         */                      
         if(packet instanceof  Login){
-            sessionManager = new SessionManager();
-            ormManager = new ORMManager();
             responseServ = new Response();
             if(packet instanceof LoginDesk){
                     session = sessionManager.createSession(ormManager, (LoginDesk) packet);
