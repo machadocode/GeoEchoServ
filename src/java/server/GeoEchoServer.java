@@ -19,7 +19,9 @@ import javax.servlet.http.HttpServletResponse;
 import model.client.Login;
 import model.client.LoginApp;
 import model.client.LoginDesk;
+import model.client.Logout;
 import model.client.Packet;
+import model.client.RegisterApp;
 import model.client.Response;
 import model.server.Session;
 
@@ -29,10 +31,11 @@ import model.server.Session;
  */
 public class GeoEchoServer extends HttpServlet {
         ORMManager ormManager = new ORMManager();
-        SessionManager sessionManager = new SessionManager();;
+        SessionManager sessionManager = new SessionManager();
         Packet packet = null;
         Session session = null;
         Response responseServ = null;
+        
     /**
      * Processament de peticions en paquets HTTP tan GET com POST
      *
@@ -57,12 +60,33 @@ public class GeoEchoServer extends HttpServlet {
         if(packet instanceof  Login){
             responseServ = new Response();
             if(packet instanceof LoginDesk){
-                    session = sessionManager.createSession(ormManager, (LoginDesk) packet);
-                    responseServ.setSessionID(session.getSessionID());
+                session = sessionManager.createSession(ormManager, (LoginDesk) packet, true);
+                responseServ.setSessionID(session.getSessionID());
             }else if (packet instanceof LoginApp){
-                    session = sessionManager.createSession(ormManager, (LoginApp) packet);                        
-                    responseServ.setSessionID(session.getSessionID());
+                session = sessionManager.createSession(ormManager, (LoginApp) packet, false);                        
+                responseServ.setSessionID(session.getSessionID());
             }            
+        }
+        if(packet instanceof RegisterApp){
+            RegisterApp register = (RegisterApp) packet;
+            responseServ = new Response();
+            System.out.println("packet instanceof RegisterApp");
+            if(ormManager.checkUserAvailable(register.getUser())){
+                if(ormManager.checkEmailAvailable(register.getMail())){
+                    if(ormManager.registerUser(register)){
+                        session = new Session(true, sessionManager.createSessionId(register.getUser(), register.getPass()), register.getUser());
+                        responseServ.setSessionID(session.getSessionID());
+                    }                       
+                }else{
+                    responseServ.setSessionID(2);
+                }
+            }else{
+                responseServ.setSessionID(1);
+            } 
+        }
+        if(packet instanceof Logout){
+            responseServ = new Response();
+            sessionManager.logout((Logout) packet);
         }
 
         

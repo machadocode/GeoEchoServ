@@ -30,10 +30,10 @@ public final class SessionManager {
      * @param login
      * @return 
      */
-    public Session createSession(ORMManager orm, Login login){
+    public Session createSession(ORMManager orm, Login login, boolean admin){
         Session session;
-        if(checkLogin(orm, login)){
-            session = new Session(true, createSessionId(login), login.getUser());
+        if(checkLogin(orm, login, admin)){
+            session = new Session(true, createSessionId(login.getUser(), login.getPass()), login.getUser());
             sessions.add(session);
             return session;
         }        
@@ -68,18 +68,19 @@ public final class SessionManager {
      * @param login
      * @return 
      */
-    public boolean checkLogin(ORMManager orm, Login login){        
-        return orm.consultaUsuario(login.getUser(), login.getPass());
+    public boolean checkLogin(ORMManager orm, Login login, boolean admin){        
+        return orm.checkUser(login.getUser(), login.getPass(), admin);
+        //return true;
     }
     
     /**
-     * Mètode que crea el Id de sessió
+     * Mètode que crea el Id de sessió a partir del login
      * @param login
      * @return 
      */
-    private int createSessionId(Login login){
+    public int createSessionId(String user, String password){
         Calendar calendar = new GregorianCalendar();
-        String cadena = login.getUser() + " - " + login.getPass() + " - " + calendar.getTime().toString();
+        String cadena = user + " - " + password + " - " + calendar.getTime().toString();
         return cadena.hashCode();
     }
 

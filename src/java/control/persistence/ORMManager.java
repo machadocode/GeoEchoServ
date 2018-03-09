@@ -12,6 +12,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
+import model.client.RegisterApp;
 import model.server.User;
 
 /**
@@ -32,11 +33,11 @@ public final class ORMManager {
         UserJpaController userJpaControl = new UserJpaController(emf);
         users = userJpaControl.findUsersEntities();
         try{
-            if(!consultaUsuario("user", "user1234")){
+            if(!checkUser("user", "user1234", false)){
                 User userNormal = new User("user", "user1234", "user@gmail.com", false);
                 userJpaControl.create(userNormal);                
             }
-            if(!consultaUsuario("admin", "admin1234")){
+            if(!checkUser("admin", "admin1234", true)){
                 User userAdmin = new User("admin", "admin1234", "useradmin@gmail.com", true);
                 userJpaControl.create(userAdmin);                
             } 
@@ -54,13 +55,51 @@ public final class ORMManager {
         emf.close();        
     }
     
-    public boolean consultaUsuario(String name, String password){
+    public boolean checkUser(String name, String password, boolean admin){
         for (User user : users){
-            if(user.getUsername().equals(name) && user.getPassword().equals(password)){
+            if(user.getUsername().equals(name) && user.getPassword().equals(password) && user.isAdminuser() == admin){
                 return true;
             }            
         }
         return false;
-    }  
+    }
+    
+    public boolean checkUserAvailable(String name){
+        for (User user : users){
+            if(user.getUsername().equals(name)){
+                return false;
+            }            
+        }
+        return true;        
+    }
+
+    public boolean checkEmailAvailable(String email){
+        for (User user : users){
+            if(user.getEmail().equals(email)){
+                return false;
+            }            
+        }
+        return true;        
+    }
+    
+    public boolean registerUser(RegisterApp register){
+        if(checkUserAvailable(register.getUser())){
+            if(checkEmailAvailable(register.getMail())){
+                createEMF();
+                UserJpaController userJpaControl = new UserJpaController(emf);
+                User user = new User(register.getUser(), register.getPass(), register.getMail(), false);
+                try{
+                    userJpaControl.create(user);            
+                }catch(Exception ex){
+                    Logger.getLogger(ORMManager.class.getName()).log(Level.SEVERE, null, ex);                            
+                    return false;
+                }finally{
+                    closeEMF();
+                }
+                return true;
+            }
+        }
+        return false;
+    }
     
 }
