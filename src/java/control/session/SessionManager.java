@@ -55,13 +55,18 @@ public final class SessionManager {
     /**
      * Mètode que realitza el logout i mata la sessió
      * @param logout
+     * @return 
      */
-    public void logout(Logout logout){
+    public boolean logout(Logout logout){
         Session sessionToKill = null;
         for(Session session : sessions){
             if (session.getSessionID()== logout.getSessionID()) sessionToKill = session;
         }
-        if(sessionToKill != null) sessions.remove(sessionToKill);
+        if(sessionToKill != null) {
+            sessions.remove(sessionToKill);
+            return true;
+        }
+        return false;
     }
     
     /**

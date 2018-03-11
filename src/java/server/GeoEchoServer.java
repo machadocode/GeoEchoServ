@@ -107,8 +107,8 @@ public class GeoEchoServer extends HttpServlet {
         // LOGOUT
         if(packet instanceof Logout){
             responseServ = new Response();
-            sessionManager.logout((Logout) packet);
-            if (session.getSessionID() != 0){
+            boolean checkLogout = sessionManager.logout((Logout) packet);
+            if (checkLogout){
                 responseServ.setStatusQuery(Response.LOGOUT_OK);
             }else{
                 responseServ.setStatusQuery(Response.LOGOUT_FAILED);                    
