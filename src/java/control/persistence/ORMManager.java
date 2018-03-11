@@ -26,26 +26,14 @@ public final class ORMManager {
 
     public ORMManager() {
         init();
+        updateDefaultUsers();
     }
     
     private void init() {
         createEMF();
         UserJpaController userJpaControl = new UserJpaController(emf);
-        users = userJpaControl.findUsersEntities();
-        try{
-            if(!checkUser("user", "user1234", false)){
-                User userNormal = new User("user", "user1234", "user@gmail.com", false);
-                userJpaControl.create(userNormal);                
-            }
-            if(!checkUser("admin", "admin1234", true)){
-                User userAdmin = new User("admin", "admin1234", "useradmin@gmail.com", true);
-                userJpaControl.create(userAdmin);                
-            } 
-        }catch(Exception ex){
-                Logger.getLogger(ORMManager.class.getName()).log(Level.SEVERE, null, ex);            
-        }finally{
-            closeEMF();
-        }
+        users = userJpaControl.findUserEntities();
+        closeEMF();     
     }
     
     private void createEMF(){
@@ -53,6 +41,29 @@ public final class ORMManager {
     }
     private void closeEMF(){
         emf.close();        
+    }
+    
+    private void updateDefaultUsers(){
+        boolean updated = false;
+        createEMF();
+        UserJpaController userJpaControl = new UserJpaController(emf);
+        try{
+            if(!checkUser("user", "user1234", false)){
+                User userNormal = new User("user", "user1234", "user@gmail.com", false);
+                userJpaControl.create(userNormal);
+                updated = true;
+            }
+            if(!checkUser("admin", "admin1234", true)){
+                User userAdmin = new User("admin", "admin1234", "useradmin@gmail.com", true);
+                userJpaControl.create(userAdmin);                
+                updated = true;
+            }
+            if (updated) users = userJpaControl.findUserEntities();
+        }catch(Exception ex){
+                Logger.getLogger(ORMManager.class.getName()).log(Level.SEVERE, null, ex);            
+        }finally{
+            closeEMF();
+        }
     }
     
     public boolean checkUser(String name, String password, boolean admin){
@@ -89,7 +100,8 @@ public final class ORMManager {
                 UserJpaController userJpaControl = new UserJpaController(emf);
                 User user = new User(register.getUser(), register.getPass(), register.getMail(), false);
                 try{
-                    userJpaControl.create(user);            
+                    userJpaControl.create(user);
+                    users = userJpaControl.findUserEntities();
                 }catch(Exception ex){
                     Logger.getLogger(ORMManager.class.getName()).log(Level.SEVERE, null, ex);                            
                     return false;

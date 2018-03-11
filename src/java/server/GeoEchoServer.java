@@ -56,17 +56,30 @@ public class GeoEchoServer extends HttpServlet {
         
         /**
          * Lògica del processament de peticions
-         */                      
+         */
+        
+        // LOGIN
         if(packet instanceof  Login){
             responseServ = new Response();
             if(packet instanceof LoginDesk){
                 session = sessionManager.createSession(ormManager, (LoginDesk) packet, true);
                 responseServ.setSessionID(session.getSessionID());
+                if (session.getSessionID() != 0){
+                    responseServ.setStatusQuery(Response.LOGIN_OK);
+                }else{
+                    responseServ.setStatusQuery(Response.LOGIN_FAILED);                    
+                }
             }else if (packet instanceof LoginApp){
                 session = sessionManager.createSession(ormManager, (LoginApp) packet, false);                        
                 responseServ.setSessionID(session.getSessionID());
+                if (session.getSessionID() != 0){
+                    responseServ.setStatusQuery(Response.LOGIN_OK);
+                }else{
+                    responseServ.setStatusQuery(Response.LOGIN_FAILED);                    
+                }
             }            
         }
+        // REGISTER APP
         if(packet instanceof RegisterApp){
             RegisterApp register = (RegisterApp) packet;
             responseServ = new Response();
@@ -76,19 +89,31 @@ public class GeoEchoServer extends HttpServlet {
                     if(ormManager.registerUser(register)){
                         session = new Session(true, sessionManager.createSessionId(register.getUser(), register.getPass()), register.getUser());
                         responseServ.setSessionID(session.getSessionID());
+                        if (session.getSessionID() != 0){
+                            responseServ.setStatusQuery(Response.REGISTER_OK);
+                        }else{
+                            responseServ.setStatusQuery(Response.REGISTER_FAILED);                    
+                        }
                     }                       
                 }else{
                     responseServ.setSessionID(2);
+                    responseServ.setStatusQuery(Response.REGISTER_EMAIL_FAILED);                    
                 }
             }else{
                 responseServ.setSessionID(1);
+                responseServ.setStatusQuery(Response.REGISTER_NAME_FAILED);                    
             } 
         }
+        // LOGOUT
         if(packet instanceof Logout){
             responseServ = new Response();
             sessionManager.logout((Logout) packet);
+            if (session.getSessionID() != 0){
+                responseServ.setStatusQuery(Response.LOGOUT_OK);
+            }else{
+                responseServ.setStatusQuery(Response.LOGOUT_FAILED);                    
+            }
         }
-
         
         /**
          * Resposta del servidor a les peticions

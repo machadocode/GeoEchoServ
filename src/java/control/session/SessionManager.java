@@ -57,9 +57,11 @@ public final class SessionManager {
      * @param logout
      */
     public void logout(Logout logout){
+        Session sessionToKill = null;
         for(Session session : sessions){
-            if (session.getSessionID()== logout.getSessionID()) sessions.remove(session);
-        }        
+            if (session.getSessionID()== logout.getSessionID()) sessionToKill = session;
+        }
+        if(sessionToKill != null) sessions.remove(sessionToKill);
     }
     
     /**
@@ -75,7 +77,8 @@ public final class SessionManager {
     
     /**
      * Mètode que crea el Id de sessió a partir del login
-     * @param login
+     * @param user
+     * @param password
      * @return 
      */
     public int createSessionId(String user, String password){
