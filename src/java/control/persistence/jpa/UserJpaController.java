@@ -1,9 +1,7 @@
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+ * App GeoEcho (Projecte final M13-DAM al IOC)
+ * Copyright (c) 2018 - Papaya Team
  */
-
 package control.persistence.jpa;
 
 import control.persistence.jpa.exceptions.NonexistentEntityException;
@@ -18,20 +16,32 @@ import javax.persistence.criteria.Root;
 import model.server.User;
 
 /**
- * 
+ * Classe de baix nivell que controla el mapatge objecte-relacional ORM (autogenerada per l'IDE)
  * @author Dani Machado
  */
 public class UserJpaController implements Serializable {
 
+    /**
+     *
+     * @param emf
+     */
     public UserJpaController(EntityManagerFactory emf) {
         this.emf = emf;
     }
     private EntityManagerFactory emf = null;
 
+    /**
+     *
+     * @return
+     */
     public EntityManager getEntityManager() {
         return emf.createEntityManager();
     }
 
+    /**
+     *
+     * @param user
+     */
     public void create(User user) {
         EntityManager em = null;
         try {
@@ -46,6 +56,12 @@ public class UserJpaController implements Serializable {
         }
     }
 
+    /**
+     *
+     * @param user
+     * @throws NonexistentEntityException
+     * @throws Exception
+     */
     public void edit(User user) throws NonexistentEntityException, Exception {
         EntityManager em = null;
         try {
@@ -69,6 +85,11 @@ public class UserJpaController implements Serializable {
         }
     }
 
+    /**
+     *
+     * @param id
+     * @throws NonexistentEntityException
+     */
     public void destroy(Long id) throws NonexistentEntityException {
         EntityManager em = null;
         try {
@@ -90,10 +111,20 @@ public class UserJpaController implements Serializable {
         }
     }
 
+    /**
+     *
+     * @return
+     */
     public List<User> findUserEntities() {
         return findUserEntities(true, -1, -1);
     }
 
+    /**
+     *
+     * @param maxResults
+     * @param firstResult
+     * @return
+     */
     public List<User> findUserEntities(int maxResults, int firstResult) {
         return findUserEntities(false, maxResults, firstResult);
     }
@@ -114,6 +145,11 @@ public class UserJpaController implements Serializable {
         }
     }
 
+    /**
+     *
+     * @param id
+     * @return
+     */
     public User findUser(Long id) {
         EntityManager em = getEntityManager();
         try {
@@ -123,6 +159,10 @@ public class UserJpaController implements Serializable {
         }
     }
 
+    /**
+     *
+     * @return
+     */
     public int getUserCount() {
         EntityManager em = getEntityManager();
         try {

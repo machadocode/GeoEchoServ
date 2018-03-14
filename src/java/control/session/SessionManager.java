@@ -1,9 +1,7 @@
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+ * App GeoEcho (Projecte final M13-DAM al IOC)
+ * Copyright (c) 2018 - Papaya Team
  */
-
 package control.session;
 
 import control.persistence.ORMManager;
@@ -16,19 +14,22 @@ import model.client.Packet;
 import model.server.Session;
 
 /**
- * Classe estàtica que gestiona las sessions
+ * Classe que gestiona las sessions d'usuari del sistema
  * @author Dani Machado
  */
 public final class SessionManager {
     
-    // Array estático que guarda las sesiones activas
+    /**
+     * Array que guarda las sessions actives
+     */
     public ArrayList<Session> sessions = new ArrayList<>();
     
     /**
      * Mètode que crea una sessió al fer login
-     * @param orm
-     * @param login
-     * @return 
+     * @param orm Gestor de persistència ORM
+     * @param login Objecte login amb les dades
+     * @param admin Rol de l'usuari
+     * @return Retorna un objecte de sessió
      */
     public Session createSession(ORMManager orm, Login login, boolean admin){
         Session session;
@@ -42,8 +43,8 @@ public final class SessionManager {
     
     /**
      * Mètode que comprova si la sessió està vigent
-     * @param packet
-     * @return 
+     * @param packet Objecte Packet rebut pel servidor
+     * @return Retorna la comrpovació de si està activa la sessió
      */
     public boolean checkSession(Packet packet){
         for(Session session : sessions){
@@ -54,8 +55,8 @@ public final class SessionManager {
     
     /**
      * Mètode que realitza el logout i mata la sessió
-     * @param logout
-     * @return 
+     * @param logout Objecte Logout rebut pel servidor
+     * @return Retorna true si ha tingut èxit
      */
     public boolean logout(Logout logout){
         Session sessionToKill = null;
@@ -71,20 +72,20 @@ public final class SessionManager {
     
     /**
      * Mètode que comprova l'usuari i contrasenya del login
-     * @param orm
-     * @param login
-     * @return 
+     * @param orm Gestor de persistència ORM
+     * @param login Objecte Login
+     * @param admin Rol del l'usuari
+     * @return Retorna true si el login és possible
      */
     public boolean checkLogin(ORMManager orm, Login login, boolean admin){        
         return orm.checkUser(login.getUser(), login.getPass(), admin);
-        //return true;
     }
     
     /**
      * Mètode que crea el Id de sessió a partir del login
-     * @param user
-     * @param password
-     * @return 
+     * @param user nom de l'usuari
+     * @param password password de l'usuari
+     * @return Retorna true si s'ha pogut crear la sessió
      */
     public int createSessionId(String user, String password){
         Calendar calendar = new GregorianCalendar();

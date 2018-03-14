@@ -1,7 +1,6 @@
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+ * App GeoEcho (Projecte final M13-DAM al IOC)
+ * Copyright (c) 2018 - Papaya Team
  */
 package server;
 
@@ -37,8 +36,7 @@ public class GeoEchoServer extends HttpServlet {
         Response responseServ = null;
         
     /**
-     * Processament de peticions en paquets HTTP tan GET com POST
-     *
+     * Processament de peticions al servlet en paquets HTTP tan GET com POST
      * @param request servlet request
      * @param response servlet response
      * @throws ServletException if a servlet-specific error occurs
@@ -46,7 +44,7 @@ public class GeoEchoServer extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException {   
         /**
-         * Entrada de peticions al servidor
+         * Entrada de peticions al servidor. Rep un objecte Packet del model de comunicacions
          */
         try(ObjectInputStream in = new ObjectInputStream(request.getInputStream())){
             packet = (Packet) in.readObject();
@@ -56,9 +54,8 @@ public class GeoEchoServer extends HttpServlet {
         
         /**
          * Lògica del processament de peticions
-         */
-        
-        // LOGIN
+         */    
+        // Peticions LOGIN
         if(packet instanceof  Login){
             responseServ = new Response();
             if(packet instanceof LoginDesk){
@@ -79,11 +76,10 @@ public class GeoEchoServer extends HttpServlet {
                 }
             }            
         }
-        // REGISTER APP
+        // Peticions REGISTER APP
         if(packet instanceof RegisterApp){
             RegisterApp register = (RegisterApp) packet;
             responseServ = new Response();
-            System.out.println("packet instanceof RegisterApp");
             if(ormManager.checkUserAvailable(register.getUser())){
                 if(ormManager.checkEmailAvailable(register.getMail())){
                     if(ormManager.registerUser(register)){
@@ -96,19 +92,18 @@ public class GeoEchoServer extends HttpServlet {
                         }
                     }                       
                 }else{
-                    responseServ.setSessionID(2);
-                    responseServ.setStatusQuery(Response.REGISTER_EMAIL_FAILED);                    
+                    responseServ.setSessionID(2);   // Provisional per gestionar la resposta abans d'implementar els codis de status query de Response
+                    responseServ.setStatusQuery(Response.REGISTER_EMAIL_FAILED);    // Definitiu per gestionar la resposta amb els codis de Response
                 }
             }else{
-                responseServ.setSessionID(1);
-                responseServ.setStatusQuery(Response.REGISTER_NAME_FAILED);                    
+                responseServ.setSessionID(1);   // Provisional per controlar la resposta abans d'implementar els codis de status query de Response
+                responseServ.setStatusQuery(Response.REGISTER_NAME_FAILED);     // Definitiu per gestionar la resposta amb els codis de Response
             } 
         }
-        // LOGOUT
+        // Peticions LOGOUT
         if(packet instanceof Logout){
             responseServ = new Response();
-            boolean checkLogout = sessionManager.logout((Logout) packet);
-            if (checkLogout){
+            if (sessionManager.logout((Logout) packet)){
                 responseServ.setStatusQuery(Response.LOGOUT_OK);
             }else{
                 responseServ.setStatusQuery(Response.LOGOUT_FAILED);                    
@@ -116,7 +111,7 @@ public class GeoEchoServer extends HttpServlet {
         }
         
         /**
-         * Resposta del servidor a les peticions
+         * Resposta del servidor a les peticions (Retorna un objecte Response del model de comunicacions)
          */
         try(ObjectOutputStream out = new ObjectOutputStream(response.getOutputStream())){
             out.writeObject(responseServ);
@@ -128,7 +123,7 @@ public class GeoEchoServer extends HttpServlet {
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
     /**
-     * Handles the HTTP <code>GET</code> method.
+     * Processament de peticions al servlet en paquets HTTP del tipus GET
      *
      * @param request servlet request
      * @param response servlet response
@@ -142,7 +137,7 @@ public class GeoEchoServer extends HttpServlet {
     }
 
     /**
-     * Handles the HTTP <code>POST</code> method.
+     * Processament de peticions al servlet en paquets HTTP del tipus POST
      *
      * @param request servlet request
      * @param response servlet response
@@ -156,9 +151,9 @@ public class GeoEchoServer extends HttpServlet {
     }
 
     /**
-     * Returns a short description of the servlet.
+     * Retorna una curta descripció del servlet.
      *
-     * @return a String containing servlet description
+     * @return un String amb la descripció del servlet
      */
     @Override
     public String getServletInfo() {
