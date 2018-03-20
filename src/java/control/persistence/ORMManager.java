@@ -11,7 +11,7 @@ import java.util.logging.Logger;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
 import model.client.RegisterApp;
-import model.server.User;
+import model.server.UserEntity;
 
 /**
  * Classe d'alt nivell gestiona la persistència de dades mitjançant el mapatge ORM
@@ -20,7 +20,7 @@ import model.server.User;
 public final class ORMManager {
     
     private EntityManagerFactory emf;
-    private List<User> users;
+    private List<UserEntity> users;
 
     /**
      * Constructor principal del ORMManager
@@ -63,12 +63,12 @@ public final class ORMManager {
         UserJpaController userJpaControl = new UserJpaController(emf);
         try{
             if(!checkUser("user", "user1234", false)){
-                User userNormal = new User("user", "user1234", "user@gmail.com", false);
+                UserEntity userNormal = new UserEntity("user", "user1234", "user@gmail.com", false, false);
                 userJpaControl.create(userNormal);
                 updated = true;
             }
             if(!checkUser("admin", "admin1234", true)){
-                User userAdmin = new User("admin", "admin1234", "useradmin@gmail.com", true);
+                UserEntity userAdmin = new UserEntity("admin", "admin1234", "useradmin@gmail.com", true, false);
                 userJpaControl.create(userAdmin);                
                 updated = true;
             }
@@ -88,7 +88,7 @@ public final class ORMManager {
      * @return resultat comprovació
      */
     public boolean checkUser(String name, String password, boolean admin){
-        for (User user : users){
+        for (UserEntity user : users){
             if(user.getUsername().equals(name) && user.getPassword().equals(password) && user.isAdminuser() == admin){
                 return true;
             }            
@@ -102,7 +102,7 @@ public final class ORMManager {
      * @return resultat comprovació
      */
     public boolean checkUserAvailable(String name){
-        for (User user : users){
+        for (UserEntity user : users){
             if(user.getUsername().equals(name)){
                 return false;
             }            
@@ -116,7 +116,7 @@ public final class ORMManager {
      * @return resultat comprovació
      */
     public boolean checkEmailAvailable(String email){
-        for (User user : users){
+        for (UserEntity user : users){
             if(user.getEmail().equals(email)){
                 return false;
             }            
@@ -134,7 +134,7 @@ public final class ORMManager {
             if(checkEmailAvailable(register.getMail())){
                 createEMF();
                 UserJpaController userJpaControl = new UserJpaController(emf);
-                User user = new User(register.getUser(), register.getPass(), register.getMail(), false);
+                UserEntity user = new UserEntity(register.getUser(), register.getPass(), register.getMail(), false, false);
                 try{
                     userJpaControl.create(user);
                     users = userJpaControl.findUserEntities();

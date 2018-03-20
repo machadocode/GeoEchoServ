@@ -1,0 +1,8 @@
+<#if licenseFirst??>
+${licenseFirst}
+</#if>
+${licensePrefix}App GeoEcho (Projecte final M13-DAM al IOC)
+${licensePrefix}Copyright (c) 2018 - Papaya Team
+<#if licenseLast??>
+${licenseLast}
+</#if>

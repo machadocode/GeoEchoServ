@@ -13,7 +13,7 @@ import javax.persistence.Query;
 import javax.persistence.EntityNotFoundException;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
-import model.server.User;
+import model.server.UserEntity;
 
 /**
  * Classe de baix nivell que controla el mapatge objecte-relacional ORM (autogenerada per l'IDE)
@@ -42,7 +42,7 @@ public class UserJpaController implements Serializable {
      *
      * @param user
      */
-    public void create(User user) {
+    public void create(UserEntity user) {
         EntityManager em = null;
         try {
             em = getEntityManager();
@@ -62,7 +62,7 @@ public class UserJpaController implements Serializable {
      * @throws NonexistentEntityException
      * @throws Exception
      */
-    public void edit(User user) throws NonexistentEntityException, Exception {
+    public void edit(UserEntity user) throws NonexistentEntityException, Exception {
         EntityManager em = null;
         try {
             em = getEntityManager();
@@ -95,9 +95,9 @@ public class UserJpaController implements Serializable {
         try {
             em = getEntityManager();
             em.getTransaction().begin();
-            User user;
+            UserEntity user;
             try {
-                user = em.getReference(User.class, id);
+                user = em.getReference(UserEntity.class, id);
                 user.getId();
             } catch (EntityNotFoundException enfe) {
                 throw new NonexistentEntityException("The user with id " + id + " no longer exists.", enfe);
@@ -115,7 +115,7 @@ public class UserJpaController implements Serializable {
      *
      * @return
      */
-    public List<User> findUserEntities() {
+    public List<UserEntity> findUserEntities() {
         return findUserEntities(true, -1, -1);
     }
 
@@ -125,15 +125,15 @@ public class UserJpaController implements Serializable {
      * @param firstResult
      * @return
      */
-    public List<User> findUserEntities(int maxResults, int firstResult) {
+    public List<UserEntity> findUserEntities(int maxResults, int firstResult) {
         return findUserEntities(false, maxResults, firstResult);
     }
 
-    private List<User> findUserEntities(boolean all, int maxResults, int firstResult) {
+    private List<UserEntity> findUserEntities(boolean all, int maxResults, int firstResult) {
         EntityManager em = getEntityManager();
         try {
             CriteriaQuery cq = em.getCriteriaBuilder().createQuery();
-            cq.select(cq.from(User.class));
+            cq.select(cq.from(UserEntity.class));
             Query q = em.createQuery(cq);
             if (!all) {
                 q.setMaxResults(maxResults);
@@ -150,10 +150,10 @@ public class UserJpaController implements Serializable {
      * @param id
      * @return
      */
-    public User findUser(Long id) {
+    public UserEntity findUser(Long id) {
         EntityManager em = getEntityManager();
         try {
-            return em.find(User.class, id);
+            return em.find(UserEntity.class, id);
         } finally {
             em.close();
         }
@@ -167,7 +167,7 @@ public class UserJpaController implements Serializable {
         EntityManager em = getEntityManager();
         try {
             CriteriaQuery cq = em.getCriteriaBuilder().createQuery();
-            Root<User> rt = cq.from(User.class);
+            Root<UserEntity> rt = cq.from(UserEntity.class);
             cq.select(em.getCriteriaBuilder().count(rt));
             Query q = em.createQuery(cq);
             return ((Long) q.getSingleResult()).intValue();
