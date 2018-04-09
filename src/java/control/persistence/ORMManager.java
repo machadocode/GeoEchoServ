@@ -4,14 +4,18 @@
  */
 package control.persistence;
 
-import control.persistence.jpa.UserJpaController;
+import control.persistence.jpa.MessageEntityJpaController;
+import control.persistence.jpa.UserEntityJpaController;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
 import model.client.RegisterApp;
+import model.server.MessageEntity;
 import model.server.UserEntity;
+import utils.Auxiliar;
 
 /**
  * Classe d'alt nivell gestiona la persistència de dades mitjançant el mapatge ORM
@@ -21,6 +25,7 @@ public final class ORMManager {
     
     private EntityManagerFactory emf;
     private List<UserEntity> users;
+    private List<MessageEntity> messages;
 
     /**
      * Constructor principal del ORMManager
@@ -35,8 +40,10 @@ public final class ORMManager {
      */
     private void init() {
         createEMF();
-        UserJpaController userJpaControl = new UserJpaController(emf);
+        UserEntityJpaController userJpaControl = new UserEntityJpaController(emf);
+        MessageEntityJpaController messageControl = new MessageEntityJpaController(emf);
         users = userJpaControl.findUserEntities();
+        messages = messageControl.findMessageEntityEntities();
         closeEMF();     
     }
     
@@ -60,15 +67,15 @@ public final class ORMManager {
     private void updateDefaultUsers(){
         boolean updated = false;
         createEMF();
-        UserJpaController userJpaControl = new UserJpaController(emf);
+        UserEntityJpaController userJpaControl = new UserEntityJpaController(emf);
         try{
             if(!checkUser("user", "user1234", false)){
-                UserEntity userNormal = new UserEntity("user", "user1234", "user@gmail.com", false, false);
+                UserEntity userNormal = new UserEntity("user", Auxiliar.encryptPasswordMD5("user1234"), "user@gmail.com", false, false);
                 userJpaControl.create(userNormal);
                 updated = true;
             }
             if(!checkUser("admin", "admin1234", true)){
-                UserEntity userAdmin = new UserEntity("admin", "admin1234", "useradmin@gmail.com", true, false);
+                UserEntity userAdmin = new UserEntity("admin", Auxiliar.encryptPasswordMD5("admin1234"), "useradmin@gmail.com", true, false);
                 userJpaControl.create(userAdmin);                
                 updated = true;
             }
@@ -89,7 +96,7 @@ public final class ORMManager {
      */
     public boolean checkUser(String name, String password, boolean admin){
         for (UserEntity user : users){
-            if(user.getUsername().equals(name) && user.getPassword().equals(password) && user.isAdminuser() == admin){
+            if(user.getUsername().equals(name) && user.getPassword().equals(Auxiliar.encryptPasswordMD5(password)) && user.isAdminuser() == admin){
                 return true;
             }            
         }
@@ -133,13 +140,13 @@ public final class ORMManager {
         if(checkUserAvailable(register.getUser())){
             if(checkEmailAvailable(register.getMail())){
                 createEMF();
-                UserJpaController userJpaControl = new UserJpaController(emf);
-                UserEntity user = new UserEntity(register.getUser(), register.getPass(), register.getMail(), false, false);
+                UserEntityJpaController userJpaControl = new UserEntityJpaController(emf);
+                UserEntity user = new UserEntity(register.getUser(), Auxiliar.encryptPasswordMD5(register.getPass()), register.getMail(), false, false);
                 try{
                     userJpaControl.create(user);
                     users = userJpaControl.findUserEntities();
                 }catch(Exception ex){
-                    Logger.getLogger(ORMManager.class.getName()).log(Level.SEVERE, null, ex);                            
+                    Logger.getLogger(ORMManager.class.getName()).log(Level.SEVERE, null, ex);
                     return false;
                 }finally{
                     closeEMF();
@@ -150,4 +157,70 @@ public final class ORMManager {
         return false;
     }
     
+    /**
+     * Registra un missatge al sistema dotant-lo de persistència a la base de dades
+     * @param messageEntity Objecte message
+     * @return resultat del registre (true si ha tingut èxit)
+     */
+    public boolean registerMessage(MessageEntity messageEntity){
+        createEMF();
+        MessageEntityJpaController messageJpaController = new MessageEntityJpaController(emf);
+        try{
+            messageJpaController.create(messageEntity);
+            messages = messageJpaController.findMessageEntityEntities();
+        }catch(Exception ex){
+            Logger.getLogger(ORMManager.class.getName()).log(Level.SEVERE, null, ex);
+            return false;
+        }finally{
+            closeEMF();
+        }
+        return true;     
+    }
+    
+    /**
+     * Retorna tots els misstages 
+     * @return 
+     */
+    public List<MessageEntity> getAllMessages(){
+        
+        return messages;
+    }
+
+    /**
+     * Retorna tots els usuaris 
+     * @return 
+     */
+    public List<UserEntity> getAllUsers(){
+        
+        return users;
+    }
+    
+    /**
+     * Retorna tos els missatges d'un usuari
+     * @param user
+     * @return 
+     */
+    public List<MessageEntity> getMessagesFromUser(String user){
+        List<MessageEntity> messageEntityListUser = new ArrayList<>();
+        for(MessageEntity messageEntity : messages){
+            if(messageEntity.getUserSender().equals(user)){
+                messageEntityListUser.add(messageEntity);
+            }
+        }        
+        return messageEntityListUser;
+    }
+    
+    /**
+     * Retorna un objecte UserEntity a partir del seu username
+     * @param username
+     * @return 
+     */
+    public UserEntity getUser(String username){
+        for(UserEntity user : users){
+            if(user.getUsername().equals(username)){
+                return user;
+            }
+        }
+        return null;
+    }
 }

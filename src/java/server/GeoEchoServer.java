@@ -5,6 +5,7 @@
 package server;
 
 import control.persistence.ORMManager;
+import control.request.RequestManager;
 import control.session.SessionManager;
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -19,7 +20,10 @@ import model.client.Login;
 import model.client.LoginApp;
 import model.client.LoginDesk;
 import model.client.Logout;
+import model.client.Message;
 import model.client.Packet;
+import model.client.QueryApp;
+import model.client.QueryDesk;
 import model.client.RegisterApp;
 import model.client.Response;
 import model.server.Session;
@@ -29,12 +33,25 @@ import model.server.Session;
  * @author Dani Machado
  */
 public class GeoEchoServer extends HttpServlet {
-        ORMManager ormManager = new ORMManager();
-        SessionManager sessionManager = new SessionManager();
-        Packet packet = null;
-        Session session = null;
-        Response responseServ = null;
-        
+    ORMManager ormManager;
+    SessionManager sessionManager;
+    RequestManager requestManager;
+    Packet packet;
+    Session session;
+    Response responseServ;
+
+    /**
+     * Constructor principal del servlet
+     */
+    public GeoEchoServer() {
+        ormManager = new ORMManager();
+        sessionManager = new SessionManager();
+        requestManager = null;
+        packet = null;
+        session = null;
+        responseServ = null;
+    }   
+               
     /**
      * Processament de peticions al servlet en paquets HTTP tan GET com POST
      * @param request servlet request
@@ -55,63 +72,40 @@ public class GeoEchoServer extends HttpServlet {
         /**
          * Lògica del processament de peticions
          */    
-        // Peticions LOGIN
-        if(packet instanceof  Login){
-            responseServ = new Response();
-            if(packet instanceof LoginDesk){
-                session = sessionManager.createSession(ormManager, (LoginDesk) packet, true);
-                responseServ.setSessionID(session.getSessionID());
-                if (session.getSessionID() != 0){
-                    responseServ.setStatusQuery(Response.LOGIN_OK);
-                }else{
-                    responseServ.setStatusQuery(Response.LOGIN_FAILED);                    
-                }
-            }else if (packet instanceof LoginApp){
-                session = sessionManager.createSession(ormManager, (LoginApp) packet, false);                        
-                responseServ.setSessionID(session.getSessionID());
-                if (session.getSessionID() != 0){
-                    responseServ.setStatusQuery(Response.LOGIN_OK);
-                }else{
-                    responseServ.setStatusQuery(Response.LOGIN_FAILED);                    
-                }
+        if (packet != null){
+            requestManager = new RequestManager(ormManager, sessionManager);
+            // Peticions LOGIN
+            if(packet instanceof Login){
+                if(packet instanceof LoginDesk){
+                    responseServ = requestManager.executeLoginDesk((LoginDesk) packet);
+                }else if (packet instanceof LoginApp){
+                    responseServ = requestManager.executeLoginApp((LoginApp) packet);
+                }            
+            }
+            // Peticions REGISTER APP
+            if(packet instanceof RegisterApp){
+                responseServ = requestManager.executeRegisterApp((RegisterApp) packet);
+            }
+            // Peticions LOGOUT
+            if(packet instanceof Logout){
+                responseServ = requestManager.executeLogout((Logout) packet);
+            }
+            // Peticions MESSAGE
+            if(packet instanceof Message){
+                responseServ = requestManager.executeMessage((Message) packet);
+            }
+            // Peticions QUERY APP
+            if(packet instanceof QueryApp){
+                responseServ = requestManager.executeQueryApp((QueryApp) packet);
+            }
+            // Peticions QUERY DESK
+            if(packet instanceof QueryDesk){
+                responseServ = requestManager.executeQueryDesk((QueryDesk) packet);
             }            
         }
-        // Peticions REGISTER APP
-        if(packet instanceof RegisterApp){
-            RegisterApp register = (RegisterApp) packet;
-            responseServ = new Response();
-            if(ormManager.checkUserAvailable(register.getUser())){
-                if(ormManager.checkEmailAvailable(register.getMail())){
-                    if(ormManager.registerUser(register)){
-                        session = new Session(true, sessionManager.createSessionId(register.getUser(), register.getPass()), register.getUser());
-                        responseServ.setSessionID(session.getSessionID());
-                        if (session.getSessionID() != 0){
-                            responseServ.setStatusQuery(Response.REGISTER_OK);
-                        }else{
-                            responseServ.setStatusQuery(Response.REGISTER_FAILED);                    
-                        }
-                    }                       
-                }else{
-                    responseServ.setSessionID(2);   // Provisional per gestionar la resposta abans d'implementar els codis de status query de Response
-                    responseServ.setStatusQuery(Response.REGISTER_EMAIL_FAILED);    // Definitiu per gestionar la resposta amb els codis de Response
-                }
-            }else{
-                responseServ.setSessionID(1);   // Provisional per controlar la resposta abans d'implementar els codis de status query de Response
-                responseServ.setStatusQuery(Response.REGISTER_NAME_FAILED);     // Definitiu per gestionar la resposta amb els codis de Response
-            } 
-        }
-        // Peticions LOGOUT
-        if(packet instanceof Logout){
-            responseServ = new Response();
-            if (sessionManager.logout((Logout) packet)){
-                responseServ.setStatusQuery(Response.LOGOUT_OK);
-            }else{
-                responseServ.setStatusQuery(Response.LOGOUT_FAILED);                    
-            }
-        }
-        
+  
         /**
-         * Resposta del servidor a les peticions (Retorna un objecte Response del model de comunicacions)
+         * Resposta del servidor a les peticions (Retorna un objecte Response del model)
          */
         try(ObjectOutputStream out = new ObjectOutputStream(response.getOutputStream())){
             out.writeObject(responseServ);

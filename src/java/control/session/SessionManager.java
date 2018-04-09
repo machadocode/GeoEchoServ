@@ -7,6 +7,7 @@ package control.session;
 import control.persistence.ORMManager;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.GregorianCalendar;
 import model.client.Login;
 import model.client.Logout;
@@ -18,6 +19,11 @@ import model.server.Session;
  * @author Dani Machado
  */
 public final class SessionManager {
+    
+    /**
+     * Temps de vida de les sessions (1h = 3600000 miliseconds)
+     */ 
+    public static final long ALIVE_TIME = 3600000;
     
     /**
      * Array que guarda las sessions actives
@@ -34,6 +40,7 @@ public final class SessionManager {
     public Session createSession(ORMManager orm, Login login, boolean admin){
         Session session;
         if(checkLogin(orm, login, admin)){
+            killOlderSessions();        // Mata les session més antigues del temps estipulat a ALIVE_TIME
             session = new Session(true, createSessionId(login.getUser(), login.getPass()), login.getUser());
             sessions.add(session);
             return session;
@@ -47,8 +54,12 @@ public final class SessionManager {
      * @return Retorna la comrpovació de si està activa la sessió
      */
     public boolean checkSession(Packet packet){
+        killOlderSessions();        // Mata les session més antigues del temps estipulat a ALIVE_TIME
         for(Session session : sessions){
-            if (session.getSessionID() == packet.getSessionID()) return true;
+            if (session.getSessionID() == packet.getSessionID()) {
+                session.setLastdate(new GregorianCalendar().getTime());
+                return true;
+            }
         }
         return false;
     }
@@ -91,6 +102,20 @@ public final class SessionManager {
         Calendar calendar = new GregorianCalendar();
         String cadena = user + " - " + password + " - " + calendar.getTime().toString();
         return cadena.hashCode();
+    }
+    
+    /**
+     * Mètode que comprova el temps transcurregut de les sessions i elimina les que passen del temps definit a la constant ALIVE_TIME
+     */
+    public void killOlderSessions(){
+        Date today = new GregorianCalendar().getTime();
+        ArrayList<Session> arraySessionList = new ArrayList<>();        
+        for(Session session : sessions){            
+            if(today.getTime() - session.getLastdate().getTime() < ALIVE_TIME){
+                arraySessionList.add(session);
+            }
+        }
+        sessions = arraySessionList;
     }
 
 }

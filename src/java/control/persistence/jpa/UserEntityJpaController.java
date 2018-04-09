@@ -19,13 +19,13 @@ import model.server.UserEntity;
  * Classe de baix nivell que controla el mapatge objecte-relacional ORM (autogenerada per l'IDE)
  * @author Dani Machado
  */
-public class UserJpaController implements Serializable {
+public class UserEntityJpaController implements Serializable {
 
     /**
      *
      * @param emf
      */
-    public UserJpaController(EntityManagerFactory emf) {
+    public UserEntityJpaController(EntityManagerFactory emf) {
         this.emf = emf;
     }
     private EntityManagerFactory emf = null;

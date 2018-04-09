@@ -9,28 +9,28 @@ package model.client;
  * Classe abstracta QueryDesk que embolcalla les sol·licituds dels client Desk al servidor
  * @author Dani Machado
  */
-public class QueryDesk {
+public class QueryDesk extends Query{
     /**
      * Constant de ALL per sol·licitar tots els usuaris
      */
     public static final String ALL = "all";
     
-    private String user;
+    private String username;
 
     /**
      * Getter User
      * @return Nom de l'usuari
      */
-    public String getUser() {
-        return user;
+    public String getUsername() {
+        return username;
     }
     
     /**
      * Setter User
-     * @param user Nom de l'usuari 
+     * @param username
      */
-    public void setUser(String user) {
-        this.user = user;
+    public void setUsername(String username) {
+        this.username = username;
     }
     
 }

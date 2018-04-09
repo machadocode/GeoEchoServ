@@ -7,16 +7,17 @@ package model.server;
 import model.client.Packet;
 import java.io.Serializable;
 import java.util.Date;
+import java.util.GregorianCalendar;
 
 /**
  * Classe que emmmagatzema la sessió de l'usuari del model de dades del servidor
  * @author Dani Machado
  */
 public class Session extends Packet implements Serializable {
-
+    
     private boolean alive;
     private String user;
-    private Date Lastdate;
+    private Date lastDate;
 
     /**
      * Constructor principal
@@ -27,6 +28,7 @@ public class Session extends Packet implements Serializable {
     public Session(boolean alive, int sessionID, String user) {
         this.alive = alive;
         this.user = user;
+        this.lastDate = new GregorianCalendar().getTime();
         init(sessionID);
     }
     
@@ -66,21 +68,21 @@ public class Session extends Packet implements Serializable {
     public void setUser(String user) {
         this.user = user;
     }
-
+    
     /**
      * Getter del LastDate
      * @return Retorna el LastDate
      */
     public Date getLastdate() {
-        return Lastdate;
+        return lastDate;
     }
 
     /**
      * Setter del LastDate
-     * @param Lastdate El LastDate
+     * @param lastDay
      */
-    public void setLastdate(Date Lastdate) {
-        this.Lastdate = Lastdate;
+    public void setLastdate(Date lastDay) {
+        this.lastDate = lastDay;
     }
-    
+        
 }
