@@ -21,27 +21,15 @@ import model.server.UserEntity;
  */
 public class UserEntityJpaController implements Serializable {
 
-    /**
-     *
-     * @param emf
-     */
     public UserEntityJpaController(EntityManagerFactory emf) {
         this.emf = emf;
     }
     private EntityManagerFactory emf = null;
 
-    /**
-     *
-     * @return
-     */
     public EntityManager getEntityManager() {
         return emf.createEntityManager();
     }
 
-    /**
-     *
-     * @param user
-     */
     public void create(UserEntity user) {
         EntityManager em = null;
         try {
@@ -56,12 +44,6 @@ public class UserEntityJpaController implements Serializable {
         }
     }
 
-    /**
-     *
-     * @param user
-     * @throws NonexistentEntityException
-     * @throws Exception
-     */
     public void edit(UserEntity user) throws NonexistentEntityException, Exception {
         EntityManager em = null;
         try {
@@ -85,12 +67,7 @@ public class UserEntityJpaController implements Serializable {
         }
     }
 
-    /**
-     *
-     * @param id
-     * @throws NonexistentEntityException
-     */
-    public void destroy(Long id) throws NonexistentEntityException {
+     public void destroy(Long id) throws NonexistentEntityException {
         EntityManager em = null;
         try {
             em = getEntityManager();
@@ -111,20 +88,10 @@ public class UserEntityJpaController implements Serializable {
         }
     }
 
-    /**
-     *
-     * @return
-     */
     public List<UserEntity> findUserEntities() {
         return findUserEntities(true, -1, -1);
     }
 
-    /**
-     *
-     * @param maxResults
-     * @param firstResult
-     * @return
-     */
     public List<UserEntity> findUserEntities(int maxResults, int firstResult) {
         return findUserEntities(false, maxResults, firstResult);
     }
@@ -145,11 +112,6 @@ public class UserEntityJpaController implements Serializable {
         }
     }
 
-    /**
-     *
-     * @param id
-     * @return
-     */
     public UserEntity findUser(Long id) {
         EntityManager em = getEntityManager();
         try {
@@ -159,10 +121,6 @@ public class UserEntityJpaController implements Serializable {
         }
     }
 
-    /**
-     *
-     * @return
-     */
     public int getUserCount() {
         EntityManager em = getEntityManager();
         try {

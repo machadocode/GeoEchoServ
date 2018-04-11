@@ -27,7 +27,7 @@ import model.server.UserEntity;
 import utils.Auxiliar;
 
 /**
- * 
+ * Classe que processa i conté la lògica de les peticions del client al servidor
  * @author Dani Machado
  */
 public final class RequestManager {
@@ -37,6 +37,11 @@ public final class RequestManager {
     private Session session;
     private final Response response;
     
+    /**
+     * Constructor principal de la classe
+     * @param ormManager
+     * @param sessionManager
+     */
     public RequestManager(ORMManager ormManager, SessionManager sessionManager) {
         this.ormManager = ormManager;
         this.sessionManager = sessionManager;
@@ -44,6 +49,11 @@ public final class RequestManager {
         this.session = null;
     }
     
+    /**
+     * Processa la petició LoginDesk
+     * @param loginDesk
+     * @return Retorna Response
+     */
     public Response executeLoginDesk(LoginDesk loginDesk){
         session = sessionManager.createSession(ormManager, loginDesk, true);
         if (session.getSessionID() != 0){
@@ -55,6 +65,11 @@ public final class RequestManager {
         return response;
     }
 
+    /**
+     * Processa la petició LoginApp
+     * @param loginApp
+     * @return Retorna Response
+     */
     public Response executeLoginApp(LoginApp loginApp){
         session = sessionManager.createSession(ormManager, (LoginApp) loginApp, false);
         if (session.getSessionID() != 0){
@@ -66,6 +81,11 @@ public final class RequestManager {
         return response; 
     }
     
+    /**
+     * Processa petició RegisterApp
+     * @param registerApp
+     * @return Retorna Response
+     */
     public Response executeRegisterApp(RegisterApp registerApp){
         if(ormManager.checkUserAvailable(registerApp.getUser())){
             if(ormManager.checkEmailAvailable(registerApp.getMail())){
@@ -87,6 +107,11 @@ public final class RequestManager {
         return response;
     }
 
+    /**
+     * Processa petició Logout
+     * @param logout
+     * @return Retorna Response
+     */
     public Response executeLogout(Logout logout){
         if (sessionManager.logout(logout)){
             response.setStatusQuery(Response.LOGOUT_OK);
@@ -96,6 +121,11 @@ public final class RequestManager {
         return response;    
     }
     
+    /**
+     * Processa petició Message
+     * @param message
+     * @return Retorna Response
+     */
     public Response executeMessage(Message message){
         if(sessionManager.checkSession(message)){
             response.setSessionID(message.getSessionID());
@@ -111,6 +141,11 @@ public final class RequestManager {
         return response;
     }
     
+    /**
+     * Processa petició QueryApp
+     * @param queryApp
+     * @return Retorna Response
+     */
     public ResponseQuery executeQueryApp(QueryApp queryApp){
         List<MessageEntity> messageEntityList;
         List<Message> messageList;
@@ -142,6 +177,11 @@ public final class RequestManager {
 
     }
 
+    /**
+     * Processa petició QueryDesk
+     * @param queryDesk
+     * @return Retorna Response
+     */
     public Response executeQueryDesk(QueryDesk queryDesk){
         List<MessageEntity> messageEntityList;
         List<Message> messageList;

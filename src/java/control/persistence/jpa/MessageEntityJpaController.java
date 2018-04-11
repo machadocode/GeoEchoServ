@@ -16,7 +16,7 @@ import javax.persistence.criteria.Root;
 import model.server.MessageEntity;
 
 /**
- * 
+ * Classe de baix nivell que controla el mapatge objecte-relacional ORM (autogenerada per l'IDE)
  * @author Dani Machado
  */
 public class MessageEntityJpaController implements Serializable {
