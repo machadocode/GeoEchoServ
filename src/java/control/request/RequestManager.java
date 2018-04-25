@@ -20,6 +20,7 @@ import model.client.Response;
 import model.client.ResponseQuery;
 import model.client.ResponseQueryApp;
 import model.client.ResponseQueryDesk;
+import model.client.UpdateUser;
 import model.client.User;
 import model.server.MessageEntity;
 import model.server.Session;
@@ -71,7 +72,7 @@ public final class RequestManager {
      * @return Retorna Response
      */
     public Response executeLoginApp(LoginApp loginApp){
-        session = sessionManager.createSession(ormManager, (LoginApp) loginApp, false);
+        session = sessionManager.createSession(ormManager, loginApp, false);
         if (session.getSessionID() != 0){
             response.setSessionID(session.getSessionID());
             response.setStatusQuery(Response.LOGIN_OK);
@@ -90,7 +91,7 @@ public final class RequestManager {
         if(ormManager.checkUserAvailable(registerApp.getUser())){
             if(ormManager.checkEmailAvailable(registerApp.getMail())){
                 if(ormManager.registerUser(registerApp)){
-                    session = new Session(true, sessionManager.createSessionId(registerApp.getUser(), registerApp.getPass()), registerApp.getUser());
+                    session = new Session(true, sessionManager.createSessionId(registerApp.getUser(), registerApp.getPass()), registerApp.getUser(), false);
                     response.setSessionID(session.getSessionID());
                     if (session.getSessionID() != 0){
                         response.setStatusQuery(Response.REGISTER_OK);
@@ -218,5 +219,20 @@ public final class RequestManager {
         }    
         return responseQueryDesk;       
 
-    }    
+    }
+    
+    /**
+     * Processa petició UpdateUser
+     * @param updateUser
+     * @return Retorna Response
+     */
+    public Response executeUpdateUser(UpdateUser updateUser){
+        if(sessionManager.checkSessionAdmin(updateUser) && ormManager.updateUser(updateUser)){
+           response.setStatusQuery(Response.UPDATE_USER_OK);
+           response.setSessionID(updateUser.getSessionID());
+        }else{
+            response.setStatusQuery(Response.UPDATE_USER_FAILED);
+        }   
+        return response;
+    } 
 }

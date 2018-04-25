@@ -18,17 +18,20 @@ public class Session extends Packet implements Serializable {
     private boolean alive;
     private String user;
     private Date lastDate;
+    private boolean admin;
 
     /**
      * Constructor principal
      * @param alive True si està viva la sessió
      * @param sessionID Id de la sessió
      * @param user Nom de l'usuari
+     * @param admin
      */
-    public Session(boolean alive, int sessionID, String user) {
+    public Session(boolean alive, int sessionID, String user, boolean admin) {
         this.alive = alive;
         this.user = user;
         this.lastDate = new GregorianCalendar().getTime();
+        this.admin = admin;
         init(sessionID);
     }
     
@@ -84,5 +87,22 @@ public class Session extends Packet implements Serializable {
     public void setLastdate(Date lastDay) {
         this.lastDate = lastDay;
     }
-        
+
+    /**
+     * Getter admin
+     * @return
+     */
+    public boolean isAdmin() {
+        return admin;
+    }
+
+    /**
+     * Setter admin
+     * @param admin
+     */
+    public void setAdmin(boolean admin) {
+        this.admin = admin;
+    }
+     
+    
 }

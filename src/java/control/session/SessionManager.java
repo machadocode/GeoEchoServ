@@ -41,11 +41,11 @@ public final class SessionManager {
         Session session;
         if(checkLogin(orm, login, admin)){
             killOlderSessions();        // Mata les session més antigues del temps estipulat a ALIVE_TIME
-            session = new Session(true, createSessionId(login.getUser(), login.getPass()), login.getUser());
+            session = new Session(true, createSessionId(login.getUser(), login.getPass()), login.getUser(), admin);
             sessions.add(session);
             return session;
         }        
-        return new Session(false, 0, null);
+        return new Session(false, 0, null, false);
     }
     
     /**
@@ -116,6 +116,20 @@ public final class SessionManager {
             }
         }
         sessions = arraySessionList;
+    }
+    
+    /**
+     * Mètode que comprova si una sessió pertany a un usuari admin
+     * @param packet
+     * @return 
+     */    
+    public boolean checkSessionAdmin(Packet packet){
+        for(Session session : sessions){
+            if (session.getSessionID() == packet.getSessionID() && session.isAdmin()) {
+                return true;
+            }
+        }
+        return false;
     }
 
 }

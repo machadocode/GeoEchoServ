@@ -26,6 +26,7 @@ import model.client.QueryApp;
 import model.client.QueryDesk;
 import model.client.RegisterApp;
 import model.client.Response;
+import model.client.UpdateUser;
 import model.server.Session;
 
 /**
@@ -101,7 +102,11 @@ public class GeoEchoServer extends HttpServlet {
             // Peticions QUERY DESK
             if(packet instanceof QueryDesk){
                 responseServ = requestManager.executeQueryDesk((QueryDesk) packet);
-            }            
+            }
+            // Peticions UPDATE USER
+            if(packet instanceof UpdateUser){
+                responseServ = requestManager.executeUpdateUser((UpdateUser) packet);                
+            }
         }
   
         /**

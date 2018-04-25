@@ -13,6 +13,7 @@ import java.util.logging.Logger;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
 import model.client.RegisterApp;
+import model.client.UpdateUser;
 import model.server.MessageEntity;
 import model.server.UserEntity;
 import utils.Auxiliar;
@@ -222,5 +223,61 @@ public final class ORMManager {
             }
         }
         return null;
+    }
+    
+    /**
+     * Actualitza les dades d'un usuari
+     * @param updateUser
+     * @return 
+     */
+    public boolean updateUser(UpdateUser updateUser){
+        UserEntity userAux = null;
+        for(UserEntity user : users){
+            if(user.getUsername().equals(updateUser.getUsername())){
+                if(updateUser.getPassword() != null){
+                    user.setPassword(updateUser.getPassword());
+                }
+                if(updateUser.getEmail() != null){
+                    user.setPassword(updateUser.getEmail());
+                }
+                if(updateUser.isAdminuser() == true){
+                    user.setAdminuser(true);
+                }else{
+                    user.setAdminuser(false);                    
+                }
+                if(updateUser.isBanned() == true){
+                    user.setBanned(true);
+                }else{
+                    user.setBanned(false);                    
+                }
+                userAux = user;
+            }
+        }
+        if(userAux != null){
+            if(updateUserJPA(userAux)){
+                return true;
+            }
+        }
+        return false;
+    }
+    
+    /**
+     * Mètode privat auxiliar de updateUser que actualitza l'usuari al JPA
+     * @param user
+     * @return 
+     */
+    private boolean updateUserJPA(UserEntity user){
+        createEMF();
+        UserEntityJpaController userEntityJpaController = new UserEntityJpaController(emf);
+        try{
+            userEntityJpaController.edit(user);
+            users = userEntityJpaController.findUserEntities();
+        }catch(Exception ex){
+            Logger.getLogger(ORMManager.class.getName()).log(Level.SEVERE, null, ex);
+            return false;
+        }finally{
+            closeEMF();
+        }
+        return true;     
     }
 }

@@ -74,7 +74,17 @@ public class Response extends Packet{
      * Constant de SESSION_FAILED
      */
     public static final int SESSION_FAILED = 12;
-       
+    
+    /**
+     * Constant de UPDATE_USER_OK
+     */
+    public static final int UPDATE_USER_OK = 13;
+
+    /**
+     * Constant de UPDATE_USER_FAILED
+     */
+    public static final int UPDATE_USER_FAILED = 14;
+    
     /**
      * Atribut statusQuery
      */
