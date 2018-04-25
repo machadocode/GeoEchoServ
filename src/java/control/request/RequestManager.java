@@ -150,16 +150,17 @@ public final class RequestManager {
     public ResponseQuery executeQueryApp(QueryApp queryApp){
         List<MessageEntity> messageEntityList;
         List<Message> messageList;
-        List<Message> nearMessagesList;        
+        List<Message> nearMessagesList;
         ResponseQueryApp responseQueryApp = new ResponseQueryApp();
 
         if(sessionManager.checkSession(queryApp)){
             messageEntityList = ormManager.getAllMessages();
+            // Transforma la llista de MessageEntity del model server a Message del model client
             messageList = Auxiliar.convertMessageEntityList(messageEntityList);
-           /*
-            * Lògica per retornar només els missatges propers > 10 km
-            */
-            nearMessagesList = messageList;
+            // Filtra els missatges per tots els públics i els privats de l'usuari que fa la petició
+            messageList = Auxiliar.publicPrivateMessagesFilter(messageList, sessionManager.getPacketSession(queryApp).getUser());   
+            // Filtra els missatges propers < 100 km
+            nearMessagesList = Auxiliar.publicDistanceMessagesFilter(queryApp, messageList, Auxiliar.MESSAGES_DISTANCE);
 
             responseQueryApp.setSessionID(queryApp.getSessionID());
 

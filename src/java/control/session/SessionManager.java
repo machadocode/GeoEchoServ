@@ -131,5 +131,19 @@ public final class SessionManager {
         }
         return false;
     }
+    
+    /**
+     * Retorna l'objecte sessió d'un paquet si n'hi vigent
+     * @param packet
+     * @return 
+     */
+    public Session getPacketSession(Packet packet){
+        for(Session session : sessions){
+            if (session.getSessionID() == packet.getSessionID()) {
+                return session;
+            }
+        }
+        return null;
+    }
 
 }
