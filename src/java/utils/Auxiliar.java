@@ -80,10 +80,10 @@ public final class Auxiliar {
      * @return Llista de missatges inclosos els privats filtrats
      */
     public static List<Message> publicPrivateMessagesFilter(List<Message> messages, String user){
-        List<Message> filteredMessagesList = new ArrayList<>(); 
+        List<Message> filteredMessagesList = new ArrayList<>();
         for(Message message: messages){
             if(message.isMsgPublic() || message.getUserSender().equals(user) || message.getUserReceiver().equals(user)){
-                filteredMessagesList.add(message);
+            filteredMessagesList.add(message);
             }       
         }
         return filteredMessagesList;
@@ -99,11 +99,13 @@ public final class Auxiliar {
     public static List<Message> publicDistanceMessagesFilter(QueryApp queryApp, List<Message> messages, int distance){
         List<Message> filteredMessagesList = new ArrayList<>(); 
         for(Message message: messages){
-            if(message.isMsgPublic()){
+            if(!message.isMsgPublic()){
+                filteredMessagesList.add(message);
+            }else{
                 if(distFrom(queryApp.getCoordY(), queryApp.getCoordX(), message.getCoordY(),message.getCoordX()) < distance){
                     filteredMessagesList.add(message);                   
-                }
-            }       
+                }                
+            }  
         }
         return filteredMessagesList;
     }

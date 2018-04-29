@@ -5,8 +5,8 @@
     <class>model.server.UserEntity</class>
     <class>model.server.MessageEntity</class>
     <properties>
-      <!--<property name="javax.persistence.jdbc.url" value="jdbc:postgresql://localhost:5432/geoecho_db"/>-->
-      <property name="javax.persistence.jdbc.url" value="jdbc:postgresql://geoechoserv-db:5432/geoecho_db"/>
+      <property name="javax.persistence.jdbc.url" value="jdbc:postgresql://localhost:5432/geoecho_db"/>
+      <!--<property name="javax.persistence.jdbc.url" value="jdbc:postgresql://geoechoserv-db:5432/geoecho_db"/>-->
       <property name="javax.persistence.jdbc.user" value="geoecho_serv"/>
       <property name="javax.persistence.jdbc.driver" value="org.postgresql.Driver"/>
       <property name="javax.persistence.jdbc.password" value="geoecho2018"/>

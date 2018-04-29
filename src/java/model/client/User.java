@@ -119,4 +119,12 @@ public class User implements Serializable{
         this.banned = banned;
     }
     
+    /**
+     * toString de User
+     * @return dades del User
+     */
+    @Override
+    public String toString() {
+        return "User{" + "username=" + username + ", password=" + password + ", email=" + email + ", adminuser=" + adminuser + ", banned=" + banned + '}';
+    }    
 }
