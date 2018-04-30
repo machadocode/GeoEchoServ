@@ -77,8 +77,13 @@ public final class RequestManager {
             response.setSessionID(session.getSessionID());
             response.setStatusQuery(Response.LOGIN_OK);
         }else{
-            response.setStatusQuery(Response.LOGIN_FAILED);                    
-        }        
+            if(ormManager.checkIfUserIsBanned(loginApp.getUser())){
+                response.setStatusQuery(Response.USER_BANNED);                                
+            }else{
+                response.setStatusQuery(Response.LOGIN_FAILED);            
+            }
+        }
+        
         return response; 
     }
     

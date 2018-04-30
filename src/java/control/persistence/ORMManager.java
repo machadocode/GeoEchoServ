@@ -89,7 +89,7 @@ public final class ORMManager {
     }
     
     /**
-     * Comprova si l'usuari està registrat al sistema
+     * Comprova si l'usuari està registrat correctament al sistema (i no està banejat)
      * @param name nom d'usuari
      * @param password password d'usuari
      * @param admin rol administrador
@@ -97,9 +97,23 @@ public final class ORMManager {
      */
     public boolean checkUser(String name, String password, boolean admin){
         for (UserEntity user : users){
-            if(user.getUsername().equals(name) && user.getPassword().equals(Auxiliar.encryptPasswordMD5(password)) && user.isAdminuser() == admin){
+            if(user.getUsername().equals(name) && user.getPassword().equals(Auxiliar.encryptPasswordMD5(password)) && user.isAdminuser() == admin && !user.isBanned()){
                 return true;
             }            
+        }
+        return false;
+    }
+    
+    /**
+     * Comprova si l'usuari està banejat
+     * @param name
+     * @return 
+     */
+    public boolean checkIfUserIsBanned(String name){
+        for (UserEntity user : users){
+            if(user.getUsername().equals(name) && user.isBanned()){
+                return true;
+            }
         }
         return false;
     }
